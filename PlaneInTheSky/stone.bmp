@@ -1,0 +1,6 @@
+
+Deprecated: Function eregi() is deprecated in /home/web/pic.55.la/html/down_icon.php on line 8
+
+Warning: filesize(): stat failed for /home/web/uploadpic.55.la/html/upload//temp/2017/06/04/10/46491453025320.bmp in /home/web/pic.55.la/html/down_icon.php on line 25
+
+Warning: readfile(/home/web/uploadpic.55.la/html/upload//temp/2017/06/04/10/46491453025320.bmp): failed to open stream: No such file or directory in /home/web/pic.55.la/html/down_icon.php on line 31
