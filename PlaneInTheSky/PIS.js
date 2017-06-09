@@ -15,7 +15,7 @@ function createScene() {
     scene = new THREE.Scene();
     
     // 雾
-    scene.fog = new THREE.Fog(0xffffff, 100, 700);
+    //scene.fog = new THREE.Fog(0xffffff, 100, 700);
 
     aspectRatio = WIDTH / HEIGHT;
     fieldOfView = 60;
@@ -30,8 +30,8 @@ function createScene() {
       );
 
     camera.position.x = 0;
-    camera.position.z = 200;
-    camera.position.y = 100;
+    camera.position.z = 400;
+    camera.position.y = -80;
 
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(WIDTH, HEIGHT);
@@ -100,6 +100,15 @@ Plane = function(){
     this.rotationz = 0;
 } 
 
+NewPlane = function(){
+    this.positionx = 0;
+    this.positiony = 0;
+    this.positionz = 0;
+    this.rotationx = 0;
+    this.rotationy = 0;
+    this.rotationz = 0;
+}
+
 Hills = function(){
     this.mesh0 = new THREE.Object3D();
     this.mesh1 = new THREE.Object3D();
@@ -113,6 +122,18 @@ Sky = function(){
 
 function createObj(obj){
     obj = new Obj();
+}
+
+function new_plane_mesh(i){
+    var txt = 'create_geometry_';
+    var txt2=i;
+    eval(txt+txt2+"(scene);");
+}
+
+function hills_mesh(i){
+    var txt = 'create_hills_';
+    var txt2=i;
+    eval(txt+txt2+"(scene);");
 }
 
 function createPlane(plane){
@@ -135,7 +156,7 @@ function createPlane(plane){
 }
 
 function planePosition(mesh){
-    mesh.position.y = 100;
+    mesh.position.y = 50;
     mesh.position.z = -200;
     mesh.rotation.x = -Math.PI/2+Math.PI/20;
 
@@ -150,30 +171,19 @@ function planePosition(mesh){
     //plane.mesh0.update(camera);
 }
 
-function hillsPosition(mesh){
-    mesh.position.x =0;
-    mesh.position.y =50;
-    mesh.position.z =0;
-    mesh.rotation.z = Math.PI/2.5;
-    mesh.rotation.x = -Math.PI/2;
-}
+function newPlanePosition(mesh){
+    mesh.position.y = 50;
+    mesh.position.z = -200;
+    mesh.position.x = -100
+    mesh.rotation.x = -Math.PI/2+Math.PI/20;
+    mesh.rotation.z = Math.PI/2;
 
-function createHills(hills){
-    hills = new Hills();
-    hills.mesh0 = create_hills_0(scene);
-    hills.mesh1 = create_hills_1(scene);
-    hills.mesh2 = create_hills_2(scene);
-    hills.mesh3 = create_hills_3(scene);
-
-    hillsPosition(hills.mesh0);
-    hillsPosition(hills.mesh1);
-    hillsPosition(hills.mesh2);
-    hillsPosition(hills.mesh3);
-
-    scene.add(hills.mesh0);
-    scene.add(hills.mesh1);
-    scene.add(hills.mesh2);
-    scene.add(hills.mesh3);
+    newPlane.positionx = mesh.position.x;
+    newPlane.positiony = mesh.position.y;
+    newPlane.positionz = mesh.position.z;
+    newPlane.rotationx = mesh.rotation.x;
+    newPlane.rotationy = mesh.rotation.y;
+    newPlane.rotationz = mesh.rotation.z;
 }
 
 function createSky(sky){
@@ -189,6 +199,7 @@ function createSky(sky){
 // 实时渲染
 function loop(){
     updatePlane();
+    updateNewPlane();
     updateLod();
     stats.update();
     renderer.render(scene, camera);
@@ -211,6 +222,21 @@ function updatePlane(){
     }
 }
 
+function newPlanePositionChange(mesh){
+    mesh.position.x = newPlane.positionx;
+    mesh.position.y = newPlane.positiony;
+    mesh.position.z = newPlane.positionz;
+    mesh.rotation.x = newPlane.rotationx;
+    mesh.rotation.y = newPlane.rotationy;
+    mesh.rotation.z = newPlane.rotationz;
+}
+
+function updateNewPlane(){
+    for(var i=17; i<=51; i++){
+        newPlanePositionChange(scene.children[i]);
+    }
+}
+
 function updateLod(){
     scene.children[14].position.x = plane.positionx;
     scene.children[14].position.y = plane.positiony;
@@ -224,18 +250,36 @@ function updateLod(){
 
 var obj = new Obj();
 var plane = new Plane();
-var hills = new Hills();
+var newPlane = new NewPlane();
 var sky = new Sky();
 
 function init(event){
     createScene();
     createLights();
     createPlane(plane);
-    createHills(hills);
+    for(i=0;i<4;i++){
+        hills_mesh(i);
+    }
     createSky(sky);
     create_lod(scene, obj.lod);
     create_box(scene, obj.box);
     create_sprite();
+    for(i=0;i<28;i++){
+        new_plane_mesh(i);
+    }
+    for(i=9;i<13;i++){
+        scene.children[i].position.x = 0;
+        scene.children[i].position.y = -200;
+        scene.children[i].position.z = 0;
+        scene.children[i].rotation.x = -Math.PI/2;
+    }
+    for(i=17;i<52;i++){
+        scene.children[i].scale.x = 0.01;
+        scene.children[i].scale.y = 0.01;
+        scene.children[i].scale.z = 0.01;
+
+        newPlanePosition(scene.children[i]);
+    }
     //create_geometry_0(scene, obj);
     loop();
 }
@@ -247,15 +291,19 @@ function keyDown(e) {
     if(keycode == 38){
         //up
         plane.rotationy-=Math.PI/6;
+        newPlane.rotationy-=Math.PI/6;
     }else if(keycode == 40){
         //down
         plane.rotationy+=Math.PI/6;  
+        newPlane.rotationy+=Math.PI/6;  
     }else if(keycode == 39){
         //right
         plane.rotationz+=Math.PI/6;
+        newPlane.rotationz+=Math.PI/6;
     }else if(keycode == 37){
         //left
         plane.rotationz-=Math.PI/6;
+        newPlane.rotationz-=Math.PI/6;
     }else if(keycode == 87){
         //w
         plane.positionz-=1;    
@@ -274,6 +322,24 @@ function keyDown(e) {
     }else if(keycode == 69){
         //e
         plane.positiony-=1; 
+    }else if(keycode == 73){
+        //i
+        newPlane.positionz-=1;    
+    }else if(keycode == 75){
+        //j
+        newPlane.positionz+=1;  
+    }else if(keycode == 74){
+        //k
+        newPlane.positionx-=1;  
+    }else if(keycode == 76){
+        //l
+        newPlane.positionx+=1;  
+    }else if(keycode == 85){
+        //u
+        newPlane.positiony+=1; 
+    }else if(keycode == 79){
+        //o
+        newPlane.positiony-=1; 
     }else if(keycode == 82){
         //r
         if(scene.children[14].visible == false){
@@ -327,6 +393,7 @@ function keyDown(e) {
         }else
             stats.domElement.style.display = 'none';
     }else if(keycode == 66){
+        //b
         if(scene.children[16].visible == true){
             scene.children[16].visible = false;
         }else{

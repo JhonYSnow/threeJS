@@ -10,10 +10,10 @@ function create_box(scene, mesh){
         specular: 0x000000,
         map: texture
     });
-    mesh = new THREE.Mesh(new THREE.CubeGeometry(50,50,50), material);
+    mesh = new THREE.Mesh(new THREE.CubeGeometry(400,200,200), material);
     mesh.castShadow = true;
     mesh.position.x = 200;
-    mesh.position.y = 150;
+    mesh.position.y = -290;
     mesh.position.z = -100;
     mesh.castShadow = true;
     //mesh.rotation.y = Math.PI/6;

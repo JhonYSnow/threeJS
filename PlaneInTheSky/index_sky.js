@@ -10,6 +10,6 @@ function create_sky(scene){
         specular: 0x000000,
         map: texture
     });
-    mesh = new THREE.Mesh(new THREE.SphereGeometry(550,100,100), material);
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(650,100,100), material);
     return mesh;
 }

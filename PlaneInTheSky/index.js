@@ -1,4 +1,4 @@
-function create_geometry_0(scene, obj){
+function create_geometry_00(scene, obj){
     var material;
     var geometry;
     //mesh.position.x =0;
